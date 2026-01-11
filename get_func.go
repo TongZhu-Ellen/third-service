@@ -10,21 +10,23 @@ import (
 
 
 func GetProduct(key string) string {
-	val, err := redisClient.Get(ctx, REDIS_PREFIX + key).Result() // to make it a go return
+	val, err := redisClient.Get(ctx, REDIS_PREFIX+key).Result() // to make it a go return
 
 	if err == redis.Nil {
 		val = db[key]
 		checkDB++
-		err = redisClient.Set(ctx, REDIS_PREFIX + key, val, ttl(key)).Err()
-		if err != nil {
-			log.Println("Redis set error:", err)
-		}
+		
 
 
     } else if err != nil {
 		log.Println("Redis get error:", err)
 		return ""
     }
+
+	err = redisClient.Set(ctx, REDIS_PREFIX+key, val, ttl(key)).Err()
+	if err != nil {
+		log.Println("Redis set error:", err)
+	}
 
 	return val
 }
