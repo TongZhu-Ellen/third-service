@@ -4,6 +4,7 @@ import (
 	"time"
 	"fmt"
 	"math/rand"
+	"sync"
 )
 
 func simulateFetches(totalExperience int, sleepTime time.Duration) {
@@ -11,7 +12,7 @@ func simulateFetches(totalExperience int, sleepTime time.Duration) {
 
 	
 
-    for i := 0; i < totalExperience; i++ {
+    for i := 1; i <= totalExperience; i++ {
         var key string
 		hot := []string{"1002", "1003"}
 		cold := []string{"1001", "1004", "1005"}
@@ -23,7 +24,7 @@ func simulateFetches(totalExperience int, sleepTime time.Duration) {
         }
 
         _ = GetProduct(key)
-		// fmt.Println(i+1, key, "=>", val)
+		// fmt.Println(i, key, "=>", val)
 
         time.Sleep(sleepTime)
 	}
@@ -33,5 +34,26 @@ func simulateFetches(totalExperience int, sleepTime time.Duration) {
 		fmt.Println("DB checking rate ==", float64(checkDB)/float64(totalExperience))
 
 
+
+}
+
+func simulateHighConcurrency(concurrent int, sleepTime time.Duration) {
+	wgp := &sync.WaitGroup{}
+	wgp.Add(concurrent)
+
+	for j:= 1; j <= concurrent; j++ {
+		
+		go func() {
+			defer wgp.Done()
+			GetProduct("1001")
+		}()
+		time.Sleep(sleepTime)
+
+	}
+
+	wgp.Wait() // ⭐️ 关键：等所有 goroutine 回来
+
+	fmt.Println("Amount", concurrent, "total experience, we have check DB", checkDB, "times. ")
+	fmt.Println("DB checking rate ==", float64(checkDB)/float64(concurrent))
 
 }
