@@ -8,8 +8,8 @@ import (
 )
 
 
-var SHORTER_DURATION = 1 * time.Second
-var LONGER_DURATION = 6 * time.Second 
+var SHORTER_DURATION = 10 * time.Millisecond
+var LONGER_DURATION = 60 * time.Millisecond
 // there two are suppose to be const, but... for the sake of testing I make it var!
 
 
