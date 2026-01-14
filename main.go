@@ -38,7 +38,7 @@ func main() {
 
 	
 
-	
+	simulateHotColdVsEqualTTL()
 
 
 

@@ -1,26 +1,13 @@
-package main 
+package main
 
 import (
 	"sync"
 )
 
-var individualLPs = make(map[string]*sync.Mutex) // lock pointers
-var grobalLP = &sync.Mutex{}
+var individualLPs sync.Map // key -> *sync.Mutex
 
 func lockOf(key string) *sync.Mutex {
-
-	grobalLP.Lock()
-	defer grobalLP.Unlock()
-
-	_, exists := individualLPs[key]
-	if !exists {
-		individualLPs[key] = &sync.Mutex{}
-	}
-	
-	return individualLPs[key]
+	// LoadOrStore 返回两个值：已存在的值 or 新创建的值，以及是否已存在
+	v, _ := individualLPs.LoadOrStore(key, &sync.Mutex{})
+	return v.(*sync.Mutex)
 }
-
-
-
-
-
